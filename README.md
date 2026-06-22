@@ -1,0 +1,1802 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MoodHome – La maison qui s'adapte à vous</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #050508;
+    --dark: #0a0a12;
+    --dark2: #0f0f1a;
+    --blue: #1a6bff;
+    --blue-bright: #2979ff;
+    --blue-glow: #4d9fff;
+    --blue-pale: rgba(26,107,255,0.12);
+    --white: #f4f6ff;
+    --white-dim: rgba(244,246,255,0.65);
+    --white-faint: rgba(244,246,255,0.18);
+    --border: rgba(255,255,255,0.07);
+    --border-blue: rgba(26,107,255,0.3);
+    --radius: 18px;
+    --radius-sm: 10px;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--dark); }
+  ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 10px; }
+
+  /* ──────────────── NAV ──────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 60px;
+    background: rgba(5,5,8,0.72);
+    backdrop-filter: blur(24px);
+    border-bottom: 1px solid var(--border);
+    transition: var(--transition);
+  }
+  .nav-logo {
+    font-family: var(--font-display);
+    font-size: 1.45rem; font-weight: 700; letter-spacing: -0.5px;
+    color: var(--white);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .logo-icon {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, var(--blue), var(--blue-glow));
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 0 18px rgba(26,107,255,0.55);
+  }
+  .nav-links {
+    display: flex; gap: 4px; list-style: none;
+  }
+  .nav-links a {
+    color: var(--white-dim); text-decoration: none;
+    font-size: 0.875rem; font-weight: 500; letter-spacing: 0.01em;
+    padding: 8px 16px; border-radius: 8px;
+    transition: var(--transition);
+  }
+  .nav-links a:hover { color: var(--white); background: var(--white-faint); }
+  .nav-cta {
+    background: var(--blue); color: var(--white) !important;
+    border-radius: 9px !important;
+    box-shadow: 0 0 20px rgba(26,107,255,0.4);
+  }
+  .nav-cta:hover { background: var(--blue-bright) !important; box-shadow: 0 0 30px rgba(26,107,255,0.6) !important; }
+
+  /* ──────────────── SECTIONS ──────────────── */
+  section { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+
+  .section-label {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--blue-glow);
+    margin-bottom: 16px; display: block;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+    font-weight: 700; line-height: 1.1; letter-spacing: -1px;
+    margin-bottom: 20px;
+  }
+  .section-subtitle {
+    font-size: 1.1rem; color: var(--white-dim); line-height: 1.7;
+    max-width: 580px;
+  }
+
+  /* ──────────────── HERO ──────────────── */
+  #hero {
+    position: relative; overflow: hidden;
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding-top: 80px;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(26,107,255,0.14) 0%, transparent 70%),
+                radial-gradient(ellipse 50% 50% at 10% 80%, rgba(77,159,255,0.08) 0%, transparent 60%),
+                var(--black);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0; opacity: 0.06;
+    background-image: linear-gradient(var(--blue-pale) 1px, transparent 1px),
+                      linear-gradient(90deg, var(--blue-pale) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridPulse 8s ease-in-out infinite;
+  }
+  @keyframes gridPulse { 0%,100%{opacity:0.06} 50%{opacity:0.12} }
+
+  .hero-content { position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(26,107,255,0.12); border: 1px solid var(--border-blue);
+    padding: 7px 16px; border-radius: 50px;
+    font-size: 0.8rem; font-weight: 500; color: var(--blue-glow);
+    margin-bottom: 28px;
+    animation: fadeUp 0.8s ease both;
+  }
+  .badge-dot { width: 7px; height: 7px; background: var(--blue-glow); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(77,159,255,0.6)} 50%{box-shadow:0 0 0 8px rgba(77,159,255,0)} }
+
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7vw, 6rem);
+    font-weight: 800; line-height: 1.0; letter-spacing: -2.5px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.9s 0.1s ease both;
+  }
+  .hero-title .gradient-text {
+    background: linear-gradient(135deg, var(--blue-glow), #a78bfa, var(--blue-bright));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-sub {
+    font-size: 1.2rem; color: var(--white-dim); line-height: 1.75; max-width: 560px;
+    margin-bottom: 44px;
+    animation: fadeUp 1s 0.2s ease both;
+  }
+  .hero-btns {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    animation: fadeUp 1s 0.3s ease both;
+  }
+  .btn-primary {
+    background: var(--blue); color: var(--white);
+    padding: 16px 34px; border-radius: 12px; border: none; cursor: pointer;
+    font-size: 0.95rem; font-weight: 600; letter-spacing: 0.01em;
+    box-shadow: 0 0 30px rgba(26,107,255,0.5), 0 4px 20px rgba(0,0,0,0.4);
+    transition: var(--transition);
+    text-decoration: none; display: inline-block;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 45px rgba(26,107,255,0.7), 0 8px 30px rgba(0,0,0,0.5); }
+  .btn-secondary {
+    background: var(--white-faint); color: var(--white);
+    padding: 16px 34px; border-radius: 12px; border: 1px solid var(--border);
+    cursor: pointer; font-size: 0.95rem; font-weight: 500;
+    backdrop-filter: blur(10px); transition: var(--transition);
+    text-decoration: none; display: inline-block;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+
+  .hero-stats {
+    display: flex; gap: 48px; margin-top: 72px;
+    animation: fadeUp 1s 0.5s ease both;
+  }
+  .stat-item {}
+  .stat-value {
+    font-family: var(--font-display);
+    font-size: 2.4rem; font-weight: 700; letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--white), var(--blue-glow));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .stat-label { font-size: 0.78rem; color: var(--white-dim); margin-top: 4px; letter-spacing: 0.04em; }
+
+  .hero-visual {
+    position: absolute; right: 40px; top: 50%; transform: translateY(-50%);
+    width: 500px; height: 500px;
+    z-index: 1;
+    animation: fadeUp 1s 0.4s ease both;
+  }
+  .house-3d {
+    width: 100%; height: 100%;
+    position: relative;
+  }
+  .house-canvas {
+    width: 100%; height: 100%;
+    border-radius: 24px;
+    background: linear-gradient(145deg, rgba(10,10,20,0.9), rgba(15,15,30,0.8));
+    border: 1px solid var(--border-blue);
+    overflow: hidden;
+    box-shadow: 0 0 60px rgba(26,107,255,0.15), 0 30px 80px rgba(0,0,0,0.6);
+    position: relative;
+  }
+  .house-canvas canvas { width: 100% !important; height: 100% !important; }
+
+  @keyframes fadeUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ──────────────── FONCTIONNEMENT ──────────────── */
+  #fonctionnement {
+    background: var(--dark); padding: 120px 0; min-height: auto;
+    position: relative; overflow: hidden;
+  }
+  #fonctionnement::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background: linear-gradient(90deg, transparent, var(--blue), transparent);
+  }
+  .steps-grid {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 24px;
+    margin-top: 64px;
+  }
+  .step-card {
+    background: rgba(10,10,20,0.7);
+    border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 36px 32px;
+    position: relative; overflow: hidden;
+    transition: var(--transition);
+    cursor: default;
+  }
+  .step-card::before {
+    content:''; position:absolute; inset:0;
+    background: linear-gradient(135deg, rgba(26,107,255,0.04) 0%, transparent 60%);
+    opacity:0; transition: var(--transition);
+  }
+  .step-card:hover { border-color: var(--border-blue); transform: translateY(-4px); }
+  .step-card:hover::before { opacity:1; }
+  .step-num {
+    font-family: var(--font-display); font-size: 3.5rem; font-weight: 800;
+    color: var(--blue); opacity: 0.2; line-height: 1; margin-bottom: 24px;
+    letter-spacing: -2px;
+  }
+  .step-icon { font-size: 2rem; margin-bottom: 16px; }
+  .step-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; margin-bottom: 12px; }
+  .step-desc { color: var(--white-dim); font-size: 0.9rem; line-height: 1.7; }
+  .step-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+  .tag {
+    padding: 5px 12px; border-radius: 6px;
+    background: var(--blue-pale); color: var(--blue-glow);
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.02em;
+  }
+
+  /* DASHBOARD LIVE */
+  .dashboard-demo {
+    margin-top: 80px;
+    background: rgba(10,10,22,0.9);
+    border: 1px solid var(--border-blue); border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 0 40px rgba(26,107,255,0.1);
+  }
+  .dash-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+  .dash-title { font-family: var(--font-display); font-size: 1rem; font-weight: 600; color: var(--white-dim); }
+  .dash-live { display: flex; align-items: center; gap: 7px; font-size: 0.75rem; color: #4cff91; }
+  .live-dot { width: 6px; height: 6px; background: #4cff91; border-radius: 50%; animation: pulse 1.5s infinite; }
+  .dash-metrics {
+    display: grid; grid-template-columns: repeat(5,1fr); gap: 16px;
+  }
+  .metric-card {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 16px; text-align: center;
+    transition: var(--transition);
+  }
+  .metric-card:hover { border-color: var(--border-blue); }
+  .metric-icon { font-size: 1.4rem; margin-bottom: 10px; }
+  .metric-value {
+    font-family: var(--font-display); font-size: 1.6rem; font-weight: 700;
+    color: var(--blue-glow);
+  }
+  .metric-label { font-size: 0.7rem; color: var(--white-dim); margin-top: 4px; }
+  .metric-bar {
+    height: 3px; background: rgba(255,255,255,0.08);
+    border-radius: 3px; margin-top: 10px; overflow: hidden;
+  }
+  .metric-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--blue), var(--blue-glow));
+    animation: fillAnim 2s ease infinite alternate;
+  }
+  @keyframes fillAnim { from { width: var(--w-from); } to { width: var(--w-to); } }
+
+  /* ──────────────── APPLICATION MOBILE ──────────────── */
+  #application {
+    padding: 120px 0; min-height: auto;
+    background: var(--black); position: relative; overflow: hidden;
+  }
+  .app-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .app-features { display: flex; flex-direction: column; gap: 28px; }
+  .app-feature {
+    display: flex; gap: 20px; align-items: flex-start;
+    padding: 24px; border-radius: var(--radius);
+    border: 1px solid var(--border);
+    transition: var(--transition); cursor: default;
+  }
+  .app-feature:hover { border-color: var(--border-blue); background: var(--blue-pale); }
+  .feat-icon {
+    width: 46px; height: 46px; border-radius: 12px; flex-shrink: 0;
+    background: var(--blue-pale); border: 1px solid var(--border-blue);
+    display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
+  }
+  .feat-title { font-weight: 600; font-size: 1rem; margin-bottom: 6px; }
+  .feat-desc { color: var(--white-dim); font-size: 0.875rem; line-height: 1.65; }
+
+  .phone-mockup {
+    width: 280px; margin: 0 auto;
+    background: linear-gradient(145deg, #141420, #0a0a18);
+    border-radius: 44px; padding: 14px;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    box-shadow: 0 0 60px rgba(26,107,255,0.18), 0 40px 80px rgba(0,0,0,0.6);
+    position: relative;
+  }
+  .phone-screen {
+    background: #080812; border-radius: 32px; overflow: hidden;
+    padding: 24px 20px; min-height: 560px;
+    position: relative;
+  }
+  .phone-notch {
+    width: 100px; height: 26px; background: #141420;
+    border-radius: 0 0 18px 18px; margin: 0 auto 20px;
+  }
+  .phone-app-header { text-align: center; margin-bottom: 20px; }
+  .phone-app-title { font-size: 0.9rem; font-weight: 700; letter-spacing: 0.02em; color: var(--white); }
+  .phone-time { font-size: 0.7rem; color: var(--white-dim); margin-top: 2px; }
+  .phone-mood {
+    background: linear-gradient(135deg, rgba(26,107,255,0.2), rgba(77,159,255,0.1));
+    border: 1px solid var(--border-blue); border-radius: 16px;
+    padding: 18px; margin-bottom: 16px; text-align: center;
+  }
+  .mood-score { font-size: 2.8rem; font-weight: 800; color: var(--blue-glow); font-family: var(--font-display); }
+  .mood-label { font-size: 0.7rem; color: var(--white-dim); }
+  .phone-metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .phone-metric {
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px; text-align: center;
+  }
+  .pm-val { font-size: 1.1rem; font-weight: 700; color: var(--white); font-family: var(--font-display); }
+  .pm-label { font-size: 0.6rem; color: var(--white-dim); margin-top: 3px; }
+  .phone-ai-bar {
+    background: rgba(26,107,255,0.12); border: 1px solid var(--border-blue);
+    border-radius: 12px; padding: 12px 14px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .ai-icon { font-size: 1.2rem; }
+  .ai-text { font-size: 0.72rem; color: var(--white-dim); line-height: 1.5; }
+  .ai-text strong { color: var(--blue-glow); font-weight: 600; }
+
+  /* ──────────────── PRIX ──────────────── */
+  #prix {
+    padding: 120px 0; min-height: auto; background: var(--dark);
+    position: relative; overflow: hidden;
+  }
+  #prix::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background: linear-gradient(90deg, transparent, var(--blue), transparent);
+  }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 64px; }
+  .pricing-card {
+    background: rgba(10,10,20,0.8);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 40px 32px;
+    position: relative; overflow: hidden; transition: var(--transition);
+  }
+  .pricing-card.featured {
+    border-color: var(--blue); background: linear-gradient(145deg, rgba(26,107,255,0.1), rgba(10,10,20,0.9));
+    box-shadow: 0 0 40px rgba(26,107,255,0.15);
+  }
+  .pricing-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+  .pricing-card.featured:hover { box-shadow: 0 20px 60px rgba(26,107,255,0.25); }
+  .pricing-badge {
+    position: absolute; top: 20px; right: 20px;
+    background: var(--blue); color: var(--white);
+    font-size: 0.7rem; font-weight: 600; letter-spacing: 0.05em;
+    padding: 4px 12px; border-radius: 20px;
+  }
+  .plan-icon { font-size: 2.2rem; margin-bottom: 20px; }
+  .plan-name { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; }
+  .plan-desc { color: var(--white-dim); font-size: 0.85rem; line-height: 1.6; margin-bottom: 28px; }
+  .plan-price { margin-bottom: 28px; }
+  .price-main { font-family: var(--font-display); font-size: 3rem; font-weight: 800; }
+  .price-unit { font-size: 1.1rem; color: var(--white-dim); }
+  .price-sub { font-size: 0.8rem; color: var(--white-dim); margin-top: 4px; }
+  .plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+  .plan-features li { font-size: 0.875rem; color: var(--white-dim); display: flex; align-items: center; gap: 10px; }
+  .plan-features li::before { content:'✓'; color: var(--blue-glow); font-weight: 700; flex-shrink: 0; }
+  .btn-plan {
+    width: 100%; padding: 14px; border-radius: 10px; border: 1px solid var(--border-blue);
+    background: transparent; color: var(--white); font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: var(--transition);
+  }
+  .btn-plan:hover { background: var(--blue-pale); }
+  .btn-plan.featured-btn {
+    background: var(--blue); border-color: var(--blue);
+    box-shadow: 0 0 24px rgba(26,107,255,0.4);
+  }
+  .btn-plan.featured-btn:hover { background: var(--blue-bright); box-shadow: 0 0 36px rgba(26,107,255,0.6); }
+
+  /* CONFIGURATEUR */
+  .configurator {
+    margin-top: 80px;
+    background: rgba(10,10,22,0.9); border: 1px solid var(--border-blue);
+    border-radius: 20px; padding: 48px;
+  }
+  .config-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+  .config-sub { color: var(--white-dim); font-size: 0.9rem; margin-bottom: 36px; }
+  .config-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .config-inputs { display: flex; flex-direction: column; gap: 20px; }
+  .input-group { display: flex; flex-direction: column; gap: 8px; }
+  .input-label { font-size: 0.8rem; font-weight: 500; color: var(--white-dim); letter-spacing: 0.04em; text-transform: uppercase; }
+  .input-row { display: flex; align-items: center; gap: 12px; }
+  .config-input {
+    flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    color: var(--white); border-radius: 10px; padding: 12px 16px;
+    font-size: 1rem; font-family: var(--font-display); font-weight: 600;
+    outline: none; transition: var(--transition); text-align: center;
+  }
+  .config-input:focus { border-color: var(--blue); box-shadow: 0 0 20px rgba(26,107,255,0.2); }
+  .config-btn {
+    width: 38px; height: 38px; border-radius: 9px;
+    background: var(--blue-pale); border: 1px solid var(--border-blue);
+    color: var(--blue-glow); font-size: 1.3rem; cursor: pointer;
+    transition: var(--transition); display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .config-btn:hover { background: var(--blue); color: var(--white); }
+  .config-result {
+    background: rgba(26,107,255,0.06); border: 1px solid var(--border-blue);
+    border-radius: 16px; padding: 28px;
+  }
+  .result-title { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-glow); margin-bottom: 20px; }
+  .result-line {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.875rem;
+  }
+  .result-line:last-child { border-bottom: none; }
+  .result-key { color: var(--white-dim); }
+  .result-val { font-weight: 600; color: var(--white); }
+  .result-total {
+    margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-blue);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .total-label { font-size: 0.875rem; color: var(--white-dim); }
+  .total-price {
+    font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--white), var(--blue-glow));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  /* ──────────────── INSTALLATION ──────────────── */
+  #installation {
+    padding: 120px 0; min-height: auto; background: var(--black);
+    position: relative; overflow: hidden;
+  }
+  .timeline { margin-top: 72px; position: relative; }
+  .timeline::before {
+    content:''; position:absolute; left: 50%; top:0; bottom:0; width:1px;
+    background: linear-gradient(180deg, transparent, var(--blue), var(--blue-glow), transparent);
+    transform: translateX(-50%);
+  }
+  .timeline-item {
+    display: flex; gap: 60px; align-items: center;
+    margin-bottom: 60px; position: relative;
+  }
+  .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+  .timeline-content {
+    flex: 1; background: rgba(10,10,20,0.7); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px 32px;
+    transition: var(--transition);
+  }
+  .timeline-content:hover { border-color: var(--border-blue); transform: translateY(-3px); }
+  .tl-num {
+    font-family: var(--font-display); font-size: 0.7rem; font-weight: 600;
+    color: var(--blue-glow); letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .tl-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; }
+  .tl-desc { color: var(--white-dim); font-size: 0.875rem; line-height: 1.65; }
+  .tl-duration {
+    display: inline-flex; align-items: center; gap: 6px;
+    margin-top: 14px; padding: 6px 14px; border-radius: 20px;
+    background: var(--blue-pale); color: var(--blue-glow);
+    font-size: 0.75rem; font-weight: 600;
+  }
+  .timeline-dot {
+    width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--blue), var(--blue-glow));
+    border: 3px solid var(--dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 0 20px rgba(26,107,255,0.5);
+    position: absolute; left: 50%; transform: translateX(-50%);
+    z-index: 1;
+  }
+  .timeline-spacer { flex: 1; }
+
+  /* ──────────────── VIDÉOS ──────────────── */
+  #videos {
+    padding: 120px 0; min-height: auto; background: var(--dark);
+    position: relative; overflow: hidden;
+  }
+  #videos::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background: linear-gradient(90deg, transparent, var(--blue), transparent);
+  }
+  .videos-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 64px; }
+  .video-card {
+    border-radius: var(--radius); overflow: hidden;
+    background: rgba(10,10,20,0.7); border: 1px solid var(--border);
+    transition: var(--transition); cursor: pointer; position: relative;
+  }
+  .video-card:hover { border-color: var(--border-blue); transform: translateY(-4px); }
+  .video-thumbnail {
+    aspect-ratio: 16/9; position: relative; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .video-thumbnail canvas { width: 100% !important; height: 100% !important; }
+  .video-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex; align-items: center; justify-content: center;
+    transition: var(--transition);
+  }
+  .video-card:hover .video-overlay { background: rgba(0,0,0,0.2); }
+  .play-btn {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(26,107,255,0.9); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; transition: var(--transition);
+    box-shadow: 0 0 24px rgba(26,107,255,0.5);
+  }
+  .video-card:hover .play-btn { transform: scale(1.12); box-shadow: 0 0 36px rgba(26,107,255,0.7); }
+  .video-info { padding: 18px 20px; }
+  .video-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
+  .video-meta { color: var(--white-dim); font-size: 0.78rem; display: flex; gap: 16px; }
+  .video-modal {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.92); backdrop-filter: blur(16px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: var(--transition);
+  }
+  .video-modal.active { opacity: 1; pointer-events: all; }
+  .modal-content {
+    width: 800px; max-width: 90vw;
+    background: var(--dark2); border: 1px solid var(--border-blue);
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 0 80px rgba(26,107,255,0.2);
+    transform: scale(0.9); transition: var(--transition);
+  }
+  .video-modal.active .modal-content { transform: scale(1); }
+  .modal-header {
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-title { font-weight: 600; font-size: 1rem; }
+  .modal-close {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--white-faint); border: none; color: var(--white);
+    cursor: pointer; font-size: 1rem; transition: var(--transition);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.15); }
+  .modal-video-area {
+    aspect-ratio: 16/9; position: relative; overflow: hidden;
+  }
+  .modal-video-area canvas { width: 100% !important; height: 100% !important; }
+
+  /* ──────────────── CONFIDENTIALITÉ ──────────────── */
+  #confidentialite {
+    padding: 120px 0; min-height: auto; background: var(--black);
+    position: relative; overflow: hidden;
+  }
+  .privacy-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: start; }
+  .privacy-cards { display: flex; flex-direction: column; gap: 20px; }
+  .privacy-card {
+    background: rgba(10,10,20,0.7); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px 28px;
+    display: flex; gap: 20px; align-items: flex-start;
+    transition: var(--transition);
+  }
+  .privacy-card:hover { border-color: var(--border-blue); }
+  .priv-icon { font-size: 1.8rem; flex-shrink: 0; margin-top: 2px; }
+  .priv-title { font-weight: 600; font-size: 0.975rem; margin-bottom: 6px; }
+  .priv-desc { color: var(--white-dim); font-size: 0.85rem; line-height: 1.65; }
+  .disable-section { text-align: center; }
+  .disable-title { font-family: var(--font-display); font-size: 2rem; font-weight: 700; margin-bottom: 16px; }
+  .disable-desc { color: var(--white-dim); font-size: 0.95rem; line-height: 1.7; margin-bottom: 36px; max-width: 380px; margin-left: auto; margin-right: auto; }
+  .disable-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: rgba(255,60,60,0.1); color: #ff6b6b;
+    border: 1.5px solid rgba(255,60,60,0.35); border-radius: 14px;
+    padding: 18px 36px; font-size: 1rem; font-weight: 600;
+    cursor: pointer; transition: var(--transition);
+  }
+  .disable-btn:hover { background: rgba(255,60,60,0.18); border-color: rgba(255,60,60,0.6); transform: scale(1.03); }
+  .disable-btn.disabled {
+    background: rgba(76,255,145,0.1); color: #4cff91;
+    border-color: rgba(76,255,145,0.35);
+  }
+  .status-indicator {
+    margin-top: 20px; font-size: 0.85rem; color: var(--white-dim);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #4cff91; animation: pulse 2s infinite; }
+  .status-dot.off { background: #ff6b6b; }
+
+  /* ──────────────── FOOTER ──────────────── */
+  footer {
+    background: var(--dark); border-top: 1px solid var(--border);
+    padding: 72px 0 40px;
+  }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 56px; }
+  .footer-brand {}
+  .footer-logo { font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+  .footer-tagline { color: var(--white-dim); font-size: 0.875rem; line-height: 1.7; max-width: 280px; margin-bottom: 24px; }
+  .social-links { display: flex; gap: 10px; }
+  .social-link {
+    width: 38px; height: 38px; border-radius: 9px;
+    background: var(--white-faint); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--white-dim); font-size: 0.9rem; text-decoration: none;
+    transition: var(--transition);
+  }
+  .social-link:hover { background: var(--blue-pale); border-color: var(--border-blue); color: var(--blue-glow); }
+  .footer-col-title { font-weight: 600; font-size: 0.875rem; margin-bottom: 20px; }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a { color: var(--white-dim); text-decoration: none; font-size: 0.85rem; transition: var(--transition); }
+  .footer-links a:hover { color: var(--white); }
+  .footer-bottom { border-top: 1px solid var(--border); padding-top: 28px; display: flex; justify-content: space-between; align-items: center; }
+  .footer-copy { color: var(--white-dim); font-size: 0.8rem; }
+  .footer-legal { display: flex; gap: 24px; }
+  .footer-legal a { color: var(--white-dim); text-decoration: none; font-size: 0.8rem; transition: var(--transition); }
+  .footer-legal a:hover { color: var(--white); }
+
+  /* ──────────────── GLOWS & PARTICLES ──────────────── */
+  .glow-orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); pointer-events: none; z-index: 0;
+  }
+
+  /* ──────────────── SCROLL REVEAL ──────────────── */
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1100px) {
+    nav { padding: 18px 30px; }
+    .hero-visual { display: none; }
+    .steps-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .app-layout { grid-template-columns: 1fr; }
+    .privacy-layout { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .videos-grid { grid-template-columns: 1fr 1fr; }
+    .config-grid { grid-template-columns: 1fr; }
+    .dash-metrics { grid-template-columns: repeat(3,1fr); }
+    .container { padding: 0 24px; }
+    .timeline::before { display: none; }
+    .timeline-item, .timeline-item:nth-child(even) { flex-direction: column; }
+    .timeline-dot { position: static; transform: none; }
+    .timeline-spacer { display: none; }
+    .hero-stats { flex-wrap: wrap; gap: 32px; }
+    .configurator { padding: 28px; }
+  }
+  @media (max-width: 600px) {
+    nav { padding: 14px 20px; }
+    .nav-links { display: none; }
+    .hero-title { font-size: 2.4rem; }
+    .pricing-grid, .videos-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: 16px; }
+    .phone-mockup { width: 240px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">
+    <div class="logo-icon">🏠</div>
+    MoodHome
+  </div>
+  <ul class="nav-links">
+    <li><a href="#fonctionnement">Fonctionnement</a></li>
+    <li><a href="#application">Application</a></li>
+    <li><a href="#prix">Prix</a></li>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#videos">Vidéos</a></li>
+    <li><a href="#confidentialite">Confidentialité</a></li>
+    <li><a href="#prix" class="nav-cta">Configurer ma maison</a></li>
+  </ul>
+</nav>
+
+<!-- ──────────────── HERO ──────────────── -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+
+  <div class="container hero-content">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      IA Adaptative v2.4 — Maintenant disponible en France
+    </div>
+    <h1 class="hero-title">
+      MoodHome –<br>
+      La maison qui<br>
+      <span class="gradient-text">s'adapte à vous</span>
+    </h1>
+    <p class="hero-sub">L'intelligence artificielle au service de votre confort, de votre santé et de votre bien-être. Votre maison ressent ce que vous ressentez.</p>
+    <div class="hero-btns">
+      <a href="#fonctionnement" class="btn-primary">Découvrir MoodHome</a>
+      <a href="#prix" class="btn-secondary">Configurer ma maison →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-value" id="stat1">0</div>
+        <div class="stat-label">MAISONS CONNECTÉES</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="stat2">0</div>
+        <div class="stat-label">CAPTEURS ACTIFS</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="stat3">0</div>
+        <div class="stat-label">SATISFACTION CLIENT</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="house-3d">
+      <div class="house-canvas" id="heroCanvas">
+        <canvas id="heroThreeCanvas"></canvas>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────── FONCTIONNEMENT ──────────────── -->
+<section id="fonctionnement">
+  <div class="container">
+    <span class="section-label reveal">Comment ça fonctionne</span>
+    <h2 class="section-title reveal">Trois étapes vers une<br>maison intelligente</h2>
+    <p class="section-subtitle reveal">MoodBand analyse votre état biologique, l'IA interprète les données et votre maison s'adapte en temps réel — automatiquement.</p>
+
+    <div class="steps-grid">
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-num">01</div>
+        <div class="step-icon">⌚</div>
+        <div class="step-title">MoodBand — Capteurs biologiques</div>
+        <div class="step-desc">Le bracelet intelligent analyse en continu vos données physiologiques pour une lecture précise de votre état.</div>
+        <div class="step-tags">
+          <span class="tag">Fréquence cardiaque</span>
+          <span class="tag">Pression artérielle</span>
+          <span class="tag">Niveau de stress</span>
+          <span class="tag">Température</span>
+          <span class="tag">Activité physique</span>
+          <span class="tag">Qualité du sommeil</span>
+        </div>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-num">02</div>
+        <div class="step-icon">🧠</div>
+        <div class="step-title">Analyse IA en temps réel</div>
+        <div class="step-desc">Notre modèle d'IA interprète les données biologiques pour déterminer votre état émotionnel et adapter la réponse optimale.</div>
+        <div class="step-tags">
+          <span class="tag">Stress → Lumière douce</span>
+          <span class="tag">Fatigue → Ambiance calme</span>
+          <span class="tag">Motivation → Énergie</span>
+          <span class="tag">Relaxation profonde</span>
+        </div>
+      </div>
+      <div class="step-card reveal reveal-delay-3">
+        <div class="step-num">03</div>
+        <div class="step-icon">🏠</div>
+        <div class="step-title">Adaptation automatique</div>
+        <div class="step-desc">En moins d'une seconde, votre environnement se transforme pour optimiser votre confort, santé et productivité.</div>
+        <div class="step-tags">
+          <span class="tag">Éclairage</span>
+          <span class="tag">Musique</span>
+          <span class="tag">Température</span>
+          <span class="tag">Stores</span>
+          <span class="tag">Parfums d'ambiance</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DASHBOARD LIVE -->
+    <div class="dashboard-demo reveal">
+      <div class="dash-header">
+        <span class="dash-title">Tableau de bord MoodHome — Données en direct</span>
+        <span class="dash-live"><span class="live-dot"></span>Actif</span>
+      </div>
+      <div class="dash-metrics">
+        <div class="metric-card">
+          <div class="metric-icon">💓</div>
+          <div class="metric-value" id="mHR">72</div>
+          <div class="metric-label">BPM</div>
+          <div class="metric-bar"><div class="metric-fill" id="fillHR" style="--w-from:55%;--w-to:75%; width:68%"></div></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">🧘</div>
+          <div class="metric-value" id="mStress">23</div>
+          <div class="metric-label">Stress %</div>
+          <div class="metric-bar"><div class="metric-fill" id="fillStr" style="--w-from:18%;--w-to:28%; width:23%"></div></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">😴</div>
+          <div class="metric-value" id="mSleep">87</div>
+          <div class="metric-label">Sommeil %</div>
+          <div class="metric-bar"><div class="metric-fill" id="fillSlp" style="--w-from:80%;--w-to:90%; width:87%"></div></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">🌡️</div>
+          <div class="metric-value" id="mTemp">36.7</div>
+          <div class="metric-label">°C Corporelle</div>
+          <div class="metric-bar"><div class="metric-fill" id="fillTmp" style="--w-from:70%;--w-to:75%; width:72%"></div></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon">⚡</div>
+          <div class="metric-value" id="mEnergy">78</div>
+          <div class="metric-label">Énergie</div>
+          <div class="metric-bar"><div class="metric-fill" id="fillEng" style="--w-from:70%;--w-to:85%; width:78%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────── APPLICATION MOBILE ──────────────── -->
+<section id="application">
+  <div class="container">
+    <div class="app-layout">
+      <div>
+        <span class="section-label reveal">Application Mobile</span>
+        <h2 class="section-title reveal">Tout le contrôle<br>dans votre poche</h2>
+        <p class="section-subtitle reveal" style="margin-bottom:48px">Disponible sur iOS et Android, l'app MoodHome vous donne une vision complète de votre environnement et permet des ajustements manuels en un instant.</p>
+        <div class="app-features">
+          <div class="app-feature reveal reveal-delay-1">
+            <div class="feat-icon">📊</div>
+            <div>
+              <div class="feat-title">Dashboard de bien-être</div>
+              <div class="feat-desc">Visualisez vos données de santé en temps réel avec des graphiques clairs et des tendances hebdomadaires.</div>
+            </div>
+          </div>
+          <div class="app-feature reveal reveal-delay-2">
+            <div class="feat-icon">🎨</div>
+            <div>
+              <div class="feat-title">Personnalisation des ambiances</div>
+              <div class="feat-desc">Créez et sauvegardez vos propres scènes lumineuses, musicales et thermiques pour chaque pièce.</div>
+            </div>
+          </div>
+          <div class="app-feature reveal reveal-delay-3">
+            <div class="feat-icon">🔔</div>
+            <div>
+              <div class="feat-title">Alertes intelligentes</div>
+              <div class="feat-desc">Recevez des recommandations personnalisées pour améliorer votre sommeil, votre stress ou votre productivité.</div>
+            </div>
+          </div>
+          <div class="app-feature reveal reveal-delay-4">
+            <div class="feat-icon">👨‍👩‍👧</div>
+            <div>
+              <div class="feat-title">Gestion multi-habitants</div>
+              <div class="feat-desc">Chaque habitant a son propre profil. L'IA gère les préférences de chacun simultanément.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal" style="display:flex;justify-content:center">
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <div class="phone-notch"></div>
+            <div class="phone-app-header">
+              <div class="phone-app-title">🏠 MoodHome</div>
+              <div class="phone-time" id="phoneTime">10:42</div>
+            </div>
+            <div class="phone-mood">
+              <div class="mood-score" id="phoneMood">82</div>
+              <div class="mood-label">Score de bien-être</div>
+              <div style="margin-top:8px;font-size:0.7rem;color:var(--blue-glow)">🟢 Ambiance Concentration activée</div>
+            </div>
+            <div class="phone-metrics-grid">
+              <div class="phone-metric">
+                <div class="pm-val" id="phoneHR">72</div>
+                <div class="pm-label">BPM</div>
+              </div>
+              <div class="phone-metric">
+                <div class="pm-val" id="phoneStress">23%</div>
+                <div class="pm-label">Stress</div>
+              </div>
+              <div class="phone-metric">
+                <div class="pm-val">21°C</div>
+                <div class="pm-label">Chambre</div>
+              </div>
+              <div class="phone-metric">
+                <div class="pm-val">Lo-Fi</div>
+                <div class="pm-label">Musique</div>
+              </div>
+            </div>
+            <div class="phone-ai-bar">
+              <div class="ai-icon">🤖</div>
+              <div class="ai-text"><strong>IA:</strong> Légère hausse du stress détectée — activation du mode relaxation dans le bureau dans <strong id="countdown">30s</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────── PRIX ──────────────── -->
+<section id="prix">
+  <div class="container">
+    <span class="section-label reveal">Tarifs</span>
+    <h2 class="section-title reveal">Des offres pour chaque<br>style de vie</h2>
+    <p class="section-subtitle reveal">Équipements sur mesure, abonnement IA inclus. Aucune surprime cachée.</p>
+
+    <div class="pricing-grid">
+      <div class="pricing-card reveal reveal-delay-1">
+        <div class="plan-icon">🌱</div>
+        <div class="plan-name">Essentiel</div>
+        <div class="plan-desc">Pour les appartements et premières maisons. Démarrez avec l'essentiel de la maison intelligente.</div>
+        <div class="plan-price">
+          <span class="price-main">1 990 €</span>
+          <div class="price-sub">+ 19 €/mois abonnement IA</div>
+        </div>
+        <ul class="plan-features">
+          <li>1 MoodBand inclus</li>
+          <li>Jusqu'à 4 caméras IA</li>
+          <li>Contrôle éclairage intelligent</li>
+          <li>Application mobile</li>
+          <li>Support standard</li>
+        </ul>
+        <button class="btn-plan" onclick="scrollTo('#prix')">Choisir Essentiel</button>
+      </div>
+      <div class="pricing-card featured reveal reveal-delay-2">
+        <div class="pricing-badge">Populaire</div>
+        <div class="plan-icon">⚡</div>
+        <div class="plan-name">Premium</div>
+        <div class="plan-desc">La solution complète pour maisons familiales jusqu'à 150 m². L'expérience MoodHome dans toutes les pièces.</div>
+        <div class="plan-price">
+          <span class="price-main">4 500 €</span>
+          <div class="price-sub">+ 29 €/mois abonnement IA</div>
+        </div>
+        <ul class="plan-features">
+          <li>4 MoodBands inclus</li>
+          <li>8 caméras IA</li>
+          <li>Éclairage + musique + température</li>
+          <li>Diffusion de parfums d'ambiance</li>
+          <li>Contrôle stores automatiques</li>
+          <li>Installation Premium incluse</li>
+          <li>Support prioritaire 24/7</li>
+        </ul>
+        <button class="btn-plan featured-btn">Choisir Premium</button>
+      </div>
+      <div class="pricing-card reveal reveal-delay-3">
+        <div class="plan-icon">🏛️</div>
+        <div class="plan-name">Élite</div>
+        <div class="plan-desc">Pour les grandes villas et demeures d'exception. Un accompagnement sur-mesure de bout en bout.</div>
+        <div class="plan-price">
+          <span class="price-main">Sur devis</span>
+          <div class="price-sub">Abonnement IA personnalisé</div>
+        </div>
+        <ul class="plan-features">
+          <li>MoodBands illimités</li>
+          <li>Caméras illimitées</li>
+          <li>Système audio Hi-Fi intégré</li>
+          <li>Domotique complète KNX</li>
+          <li>Gestionnaire dédié</li>
+          <li>Mise à jour IA en avant-première</li>
+        </ul>
+        <button class="btn-plan">Nous contacter</button>
+      </div>
+    </div>
+
+    <!-- CONFIGURATEUR -->
+    <div class="configurator reveal">
+      <div class="config-title">Calculez votre configuration idéale</div>
+      <div class="config-sub">Ajustez les paramètres ci-dessous pour obtenir une estimation personnalisée.</div>
+      <div class="config-grid">
+        <div class="config-inputs">
+          <div class="input-group">
+            <label class="input-label">Surface (m²)</label>
+            <div class="input-row">
+              <button class="config-btn" onclick="changeVal('surface',-10)">−</button>
+              <input type="number" class="config-input" id="surface" value="120" min="20" max="800">
+              <button class="config-btn" onclick="changeVal('surface',10)">+</button>
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Nombre de chambres</label>
+            <div class="input-row">
+              <button class="config-btn" onclick="changeVal('chambres',-1)">−</button>
+              <input type="number" class="config-input" id="chambres" value="3" min="1" max="20">
+              <button class="config-btn" onclick="changeVal('chambres',1)">+</button>
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Nombre d'habitants</label>
+            <div class="input-row">
+              <button class="config-btn" onclick="changeVal('habitants',-1)">−</button>
+              <input type="number" class="config-input" id="habitants" value="4" min="1" max="20">
+              <button class="config-btn" onclick="changeVal('habitants',1)">+</button>
+            </div>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Étages</label>
+            <div class="input-row">
+              <button class="config-btn" onclick="changeVal('etages',-1)">−</button>
+              <input type="number" class="config-input" id="etages" value="2" min="1" max="5">
+              <button class="config-btn" onclick="changeVal('etages',1)">+</button>
+            </div>
+          </div>
+        </div>
+        <div class="config-result">
+          <div class="result-title">Estimation personnalisée</div>
+          <div class="result-line"><span class="result-key">Caméras recommandées</span><span class="result-val" id="rCams">8</span></div>
+          <div class="result-line"><span class="result-key">MoodBands</span><span class="result-val" id="rBands">4</span></div>
+          <div class="result-line"><span class="result-key">Prix matériel</span><span class="result-val" id="rMat">4 500 €</span></div>
+          <div class="result-line"><span class="result-key">Installation</span><span class="result-val" id="rInstall">2 000 €</span></div>
+          <div class="result-line"><span class="result-key">Abonnement IA</span><span class="result-val" id="rSub">29 €/mois</span></div>
+          <div class="result-total">
+            <span class="total-label">Total estimé</span>
+            <span class="total-price" id="rTotal">6 500 €</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────── INSTALLATION ──────────────── -->
+<section id="installation">
+  <div class="container">
+    <span class="section-label reveal">Processus d'installation</span>
+    <h2 class="section-title reveal">De la commande à la<br>maison intelligente en 4 semaines</h2>
+    <p class="section-subtitle reveal">Un processus fluide, piloté par notre équipe de techniciens certifiés MoodHome.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-content reveal">
+          <div class="tl-num">Étape 1</div>
+          <div class="tl-title">Analyse du projet</div>
+          <div class="tl-desc">Un expert MoodHome visite votre domicile (ou visioconférence), analyse l'architecture et définit le plan d'installation optimal pour chaque pièce.</div>
+          <div class="tl-duration">⏱ 3 jours</div>
+        </div>
+        <div class="timeline-dot">🔍</div>
+        <div class="timeline-spacer"></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-spacer"></div>
+        <div class="timeline-dot">🏭</div>
+        <div class="timeline-content reveal">
+          <div class="tl-num">Étape 2</div>
+          <div class="tl-title">Fabrication & configuration</div>
+          <div class="tl-desc">Votre kit MoodHome est assemblé et pré-configuré avec votre profil unique. Les caméras et capteurs sont calibrés en usine.</div>
+          <div class="tl-duration">⏱ 2 semaines</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-content reveal">
+          <div class="tl-num">Étape 3</div>
+          <div class="tl-title">Livraison à domicile</div>
+          <div class="tl-desc">Livraison express avec suivi en temps réel. Le colis arrive emballé dans un packaging premium, prêt pour l'installation.</div>
+          <div class="tl-duration">⏱ 1 semaine</div>
+        </div>
+        <div class="timeline-dot">📦</div>
+        <div class="timeline-spacer"></div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-spacer"></div>
+        <div class="timeline-dot">🔧</div>
+        <div class="timeline-content reveal">
+          <div class="tl-num">Étape 4</div>
+          <div class="tl-title">Installation professionnelle</div>
+          <div class="tl-desc">Nos techniciens installent tous les équipements, configurent les réseaux et testent chaque dispositif pièce par pièce.</div>
+          <div class="tl-duration">⏱ 2 jours</div>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-content reveal">
+          <div class="tl-num">Étape 5</div>
+          <div class="tl-title">Calibration IA & formation</div>
+          <div class="tl-desc">L'IA apprend vos habitudes et préférences. Nos experts vous forment à l'application et personnalisent vos premières ambiances.</div>
+          <div class="tl-duration">⏱ 48 heures</div>
+        </div>
+        <div class="timeline-dot">🤖</div>
+        <div class="timeline-spacer"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────── VIDÉOS ──────────────── -->
+<section id="videos">
+  <div class="container">
+    <span class="section-label reveal">Démonstrations</span>
+    <h2 class="section-title reveal">Voyez MoodHome<br>en action</h2>
+    <p class="section-subtitle reveal">Des démonstrations réelles capturées dans des maisons équipées MoodHome.</p>
+
+    <div class="videos-grid">
+      <div class="video-card reveal reveal-delay-1" onclick="openModal(0)">
+        <div class="video-thumbnail">
+          <canvas id="vid0" width="400" height="225"></canvas>
+          <div class="video-overlay"><div class="play-btn">▶</div></div>
+        </div>
+        <div class="video-info">
+          <div class="video-title">Détection de stress — Adaptation instantanée</div>
+          <div class="video-meta"><span>2 min 34</span><span>• Salon</span></div>
+        </div>
+      </div>
+      <div class="video-card reveal reveal-delay-2" onclick="openModal(1)">
+        <div class="video-thumbnail">
+          <canvas id="vid1" width="400" height="225"></canvas>
+          <div class="video-overlay"><div class="play-btn">▶</div></div>
+        </div>
+        <div class="video-info">
+          <div class="video-title">Éclairage intelligent — Transitions lumineuses</div>
+          <div class="video-meta"><span>1 min 52</span><span>• Chambre</span></div>
+        </div>
+      </div>
+      <div class="video-card reveal reveal-delay-3" onclick="openModal(2)">
+        <div class="video-thumbnail">
+          <canvas id="vid2" width="400" height="225"></canvas>
+          <div class="video-overlay"><div class="play-btn">▶</div></div>
+        </div>
+        <div class="video-info">
+          <div class="video-title">Contrôle musical IA — Du jazz au lo-fi</div>
+          <div class="video-meta"><span>3 min 10</span><span>• Bureau</span></div>
+        </div>
+      </div>
+      <div class="video-card reveal reveal-delay-1" onclick="openModal(3)">
+        <div class="video-thumbnail">
+          <canvas id="vid3" width="400" height="225"></canvas>
+          <div class="video-overlay"><div class="play-btn">▶</div></div>
+        </div>
+        <div class="video-info">
+          <div class="video-title">MoodBand — Analyse santé en direct</div>
+          <div class="video-meta"><span>2 min 18</span><span>• MoodBand</span></div>
+        </div>
+      </div>
+      <div class="video-card reveal reveal-delay-2" onclick="openModal(4)">
+        <div class="video-thumbnail">
+          <canvas id="vid4" width="400" height="225"></canvas>
+          <div class="video-overlay"><div class="play-btn">▶</div></div>
+        </div>
+        <div class="video-info">
+          <div class="video-title">Surveillance intelligente — Caméras IA</div>
+          <div class="video-meta"><span>4 min 05</span><span>• Entrée</span></div>
+        </div>
+      </div>
+      <div class="video-card reveal reveal-delay-3" onclick="openModal(5)">
+        <div class="video-thumbnail">
+          <canvas id="vid5" width="400" height="225"></canvas>
+          <div class="video-overlay"><div class="play-btn">▶</div></div>
+        </div>
+        <div class="video-info">
+          <div class="video-title">Tour complet MoodHome Premium</div>
+          <div class="video-meta"><span>8 min 42</span><span>• Maison complète</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO MODAL -->
+<div class="video-modal" id="videoModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="modal-title" id="modalTitle">Démonstration MoodHome</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-video-area">
+      <canvas id="modalCanvas" width="800" height="450"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────────── CONFIDENTIALITÉ ──────────────── -->
+<section id="confidentialite">
+  <div class="container">
+    <span class="section-label reveal">Vie privée & Sécurité</span>
+    <h2 class="section-title reveal">Vos données vous<br>appartiennent</h2>
+
+    <div class="privacy-layout" style="margin-top:64px">
+      <div class="privacy-cards">
+        <div class="privacy-card reveal reveal-delay-1">
+          <div class="priv-icon">🔐</div>
+          <div>
+            <div class="priv-title">Chiffrement de bout en bout AES-256</div>
+            <div class="priv-desc">Toutes les données biométriques et vidéos sont chiffrées avec un standard bancaire. Personne, pas même Anthropic, ne peut y accéder.</div>
+          </div>
+        </div>
+        <div class="privacy-card reveal reveal-delay-2">
+          <div class="priv-icon">🏠</div>
+          <div>
+            <div class="priv-title">Traitement local par défaut</div>
+            <div class="priv-desc">L'analyse IA se fait directement sur votre équipement. Vos données ne quittent pas votre domicile sauf si vous l'autorisez explicitement.</div>
+          </div>
+        </div>
+        <div class="privacy-card reveal reveal-delay-3">
+          <div class="priv-icon">👤</div>
+          <div>
+            <div class="priv-title">Propriété totale de vos données</div>
+            <div class="priv-desc">Exportez, supprimez ou transférez toutes vos données à tout moment. Conformité RGPD garantie. Aucune revente à des tiers.</div>
+          </div>
+        </div>
+        <div class="privacy-card reveal reveal-delay-4">
+          <div class="priv-icon">🛡️</div>
+          <div>
+            <div class="priv-title">Audit de sécurité indépendant</div>
+            <div class="priv-desc">MoodHome est audité annuellement par des cabinets de cybersécurité certifiés. Rapports disponibles publiquement.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="disable-section reveal">
+        <h3 class="disable-title">Contrôle total,<br>à tout moment</h3>
+        <p class="disable-desc">Si vous souhaitez reprendre le contrôle manuel à tout moment, désactivez MoodHome en un clic. Vos réglages sont conservés et l'IA s'arrête immédiatement.</p>
+        <button class="disable-btn" id="disableBtn" onclick="toggleMoodHome()">
+          <span id="disableBtnIcon">⏹</span>
+          <span id="disableBtnText">Désactiver MoodHome</span>
+        </button>
+        <div class="status-indicator" id="statusIndicator">
+          <span class="status-dot" id="statusDot"></span>
+          <span id="statusText">MoodHome actif — Mode IA en cours</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────── FOOTER ──────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo"><div class="logo-icon" style="width:28px;height:28px;font-size:13px">🏠</div> MoodHome</div>
+        <p class="footer-tagline">La première maison intelligente qui s'adapte à vos émotions grâce à l'intelligence artificielle. Confort, santé et bien-être réinventés.</p>
+        <div class="social-links">
+          <a class="social-link" href="#" title="Twitter/X">𝕏</a>
+          <a class="social-link" href="#" title="LinkedIn">in</a>
+          <a class="social-link" href="#" title="Instagram">📷</a>
+          <a class="social-link" href="#" title="YouTube">▶</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-title">Produit</div>
+        <ul class="footer-links">
+          <li><a href="#fonctionnement">Fonctionnement</a></li>
+          <li><a href="#application">Application mobile</a></li>
+          <li><a href="#prix">Tarifs</a></li>
+          <li><a href="#installation">Installation</a></li>
+          <li><a href="#videos">Vidéos</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Support</div>
+        <ul class="footer-links">
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="#">Garantie</a></li>
+          <li><a href="#">Partenaires</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Légal</div>
+        <ul class="footer-links">
+          <li><a href="#">Mentions légales</a></li>
+          <li><a href="#">Politique de confidentialité</a></li>
+          <li><a href="#">CGV</a></li>
+          <li><a href="#">RGPD</a></li>
+          <li><a href="#">Cookies</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 MoodHome SAS. Tous droits réservés. Fabriqué en France 🇫🇷</div>
+      <div class="footer-legal">
+        <a href="#">Politique de confidentialité</a>
+        <a href="#">CGV</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ══════════════════════════════════════════════
+//  UTILITIES
+// ══════════════════════════════════════════════
+function lerp(a,b,t){return a+(b-a)*t}
+function rand(a,b){return a+Math.random()*(b-a)}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+
+// ══════════════════════════════════════════════
+//  NAV SCROLL EFFECT
+// ══════════════════════════════════════════════
+window.addEventListener('scroll',()=>{
+  const nav=document.getElementById('navbar');
+  nav.style.background=window.scrollY>50
+    ?'rgba(5,5,8,0.95)':'rgba(5,5,8,0.72)';
+});
+
+// ══════════════════════════════════════════════
+//  SCROLL REVEAL
+// ══════════════════════════════════════════════
+const revealObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.08});
+document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+
+// ══════════════════════════════════════════════
+//  STATS COUNTER
+// ══════════════════════════════════════════════
+function animateCounter(el,target,suffix='',decimals=0,duration=2000){
+  let start=null;
+  function step(ts){
+    if(!start)start=ts;
+    const p=Math.min((ts-start)/duration,1);
+    const ease=1-Math.pow(1-p,3);
+    const v=ease*target;
+    el.textContent=(decimals?v.toFixed(decimals):Math.floor(v))+suffix;
+    if(p<1)requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+const statsObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      animateCounter(document.getElementById('stat1'),12847,'');
+      animateCounter(document.getElementById('stat2'),94312,'');
+      animateCounter(document.getElementById('stat3'),98,'%');
+      statsObs.disconnect();
+    }
+  });
+},{threshold:0.3});
+statsObs.observe(document.getElementById('hero'));
+
+// ══════════════════════════════════════════════
+//  LIVE DASHBOARD METRICS ANIMATION
+// ══════════════════════════════════════════════
+const metrics={
+  HR:{el:'mHR',min:62,max:88,val:72,target:72},
+  Stress:{el:'mStress',min:10,max:45,val:23,target:23},
+  Sleep:{el:'mSleep',min:75,max:95,val:87,target:87},
+  Temp:{el:'mTemp',min:36.2,max:37.2,val:36.7,target:36.7,dec:1},
+  Energy:{el:'mEnergy',min:55,max:95,val:78,target:78}
+};
+setInterval(()=>{
+  Object.values(metrics).forEach(m=>{
+    m.target=rand(m.min,m.max);
+    m.val=lerp(m.val,m.target,0.3);
+    const el=document.getElementById(m.el);
+    if(el)el.textContent=m.dec?m.val.toFixed(m.dec):Math.round(m.val);
+  });
+  // sync phone
+  const phr=document.getElementById('phoneHR');
+  const pst=document.getElementById('phoneStress');
+  if(phr)phr.textContent=Math.round(metrics.HR.val);
+  if(pst)pst.textContent=Math.round(metrics.Stress.val)+'%';
+  const pm=document.getElementById('phoneMood');
+  if(pm){
+    const mood=Math.round(100-metrics.Stress.val*0.5+metrics.Energy.val*0.3+metrics.Sleep.val*0.2-50);
+    pm.textContent=clamp(mood,30,99);
+  }
+},1500);
+
+// ══════════════════════════════════════════════
+//  PHONE CLOCK & COUNTDOWN
+// ══════════════════════════════════════════════
+function updatePhoneTime(){
+  const now=new Date();
+  const t=now.getHours().toString().padStart(2,'0')+':'+now.getMinutes().toString().padStart(2,'0');
+  const el=document.getElementById('phoneTime');
+  if(el)el.textContent=t;
+}
+updatePhoneTime();
+setInterval(updatePhoneTime,10000);
+let cdVal=30;
+setInterval(()=>{
+  cdVal--;
+  if(cdVal<=0)cdVal=30;
+  const el=document.getElementById('countdown');
+  if(el)el.textContent=cdVal+'s';
+},1000);
+
+// ══════════════════════════════════════════════
+//  CONFIGURATOR CALC
+// ══════════════════════════════════════════════
+function changeVal(id,delta){
+  const inp=document.getElementById(id);
+  let v=parseInt(inp.value)+delta;
+  inp.value=Math.max(parseInt(inp.min),Math.min(parseInt(inp.max),v));
+  calcConfig();
+}
+function calcConfig(){
+  const surf=parseInt(document.getElementById('surface').value)||120;
+  const ch=parseInt(document.getElementById('chambres').value)||3;
+  const hab=parseInt(document.getElementById('habitants').value)||4;
+  const et=parseInt(document.getElementById('etages').value)||2;
+  const cams=Math.max(4,Math.round(surf/15)+et*2);
+  const bands=hab;
+  const mat=cams*149+bands*299+1500;
+  const install=Math.max(1200,Math.round(surf*12));
+  const sub=hab>4?49:hab>2?29:19;
+  const total=mat+install;
+  document.getElementById('rCams').textContent=cams;
+  document.getElementById('rBands').textContent=bands;
+  document.getElementById('rMat').textContent=mat.toLocaleString('fr-FR')+ ' €';
+  document.getElementById('rInstall').textContent=install.toLocaleString('fr-FR')+' €';
+  document.getElementById('rSub').textContent=sub+' €/mois';
+  document.getElementById('rTotal').textContent=total.toLocaleString('fr-FR')+' €';
+}
+['surface','chambres','habitants','etages'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',calcConfig);
+});
+
+// ══════════════════════════════════════════════
+//  DISABLE / ENABLE MOODHOME TOGGLE
+// ══════════════════════════════════════════════
+let moodActive=true;
+function toggleMoodHome(){
+  moodActive=!moodActive;
+  const btn=document.getElementById('disableBtn');
+  const icon=document.getElementById('disableBtnIcon');
+  const txt=document.getElementById('disableBtnText');
+  const dot=document.getElementById('statusDot');
+  const stxt=document.getElementById('statusText');
+  if(!moodActive){
+    btn.classList.add('disabled');
+    icon.textContent='▶';
+    txt.textContent='Réactiver MoodHome';
+    dot.classList.add('off');
+    stxt.textContent='MoodHome désactivé — Mode contrôle manuel';
+  } else {
+    btn.classList.remove('disabled');
+    icon.textContent='⏹';
+    txt.textContent='Désactiver MoodHome';
+    dot.classList.remove('off');
+    stxt.textContent='MoodHome actif — Mode IA en cours';
+  }
+}
+
+// ══════════════════════════════════════════════
+//  VIDEO MODAL
+// ══════════════════════════════════════════════
+const videoTitles=[
+  'Détection de stress — Adaptation instantanée',
+  'Éclairage intelligent — Transitions lumineuses',
+  'Contrôle musical IA — Du jazz au lo-fi',
+  'MoodBand — Analyse santé en direct',
+  'Surveillance intelligente — Caméras IA',
+  'Tour complet MoodHome Premium'
+];
+let modalAnim=null;
+function openModal(i){
+  document.getElementById('modalTitle').textContent=videoTitles[i];
+  document.getElementById('videoModal').classList.add('active');
+  startModalCanvas(i);
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('videoModal').classList.remove('active');
+  if(modalAnim)cancelAnimationFrame(modalAnim);
+  document.body.style.overflow='';
+}
+document.getElementById('videoModal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('videoModal'))closeModal();
+});
+
+// ══════════════════════════════════════════════
+//  CANVAS SCENE RENDERERS
+// ══════════════════════════════════════════════
+
+/* ——— Shared particle systems ——— */
+class ParticleField{
+  constructor(n=60){
+    this.pts=[];
+    for(let i=0;i<n;i++)this.pts.push({
+      x:Math.random(),y:Math.random(),
+      vx:(Math.random()-0.5)*0.0008,vy:(Math.random()-0.5)*0.0008,
+      r:Math.random()*2+0.5,a:Math.random()
+    });
+  }
+  draw(ctx,w,h,color='rgba(77,159,255,'){
+    this.pts.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=1;if(p.x>1)p.x=0;
+      if(p.y<0)p.y=1;if(p.y>1)p.y=0;
+      ctx.beginPath();
+      ctx.arc(p.x*w,p.y*h,p.r,0,Math.PI*2);
+      ctx.fillStyle=color+(0.2+p.a*0.4)+')';
+      ctx.fill();
+    });
+    // connect close particles
+    this.pts.forEach((a,i)=>this.pts.slice(i+1).forEach(b=>{
+      const dx=(a.x-b.x)*w, dy=(a.y-b.y)*h;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<80){
+        ctx.beginPath();
+        ctx.moveTo(a.x*w,a.y*h);ctx.lineTo(b.x*w,b.y*h);
+        ctx.strokeStyle=color+(0.08*(1-d/80))+')';
+        ctx.lineWidth=0.5;ctx.stroke();
+      }
+    }));
+  }
+}
+
+/* ——— Hero Canvas: isometric house ——— */
+(function(){
+  const c=document.getElementById('heroThreeCanvas');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  c.width=500;c.height=500;
+  const pf=new ParticleField(40);
+  let t=0;
+
+  // Color palette driven by time for light adaptation
+  const rooms=[
+    {x:0,y:0,w:2,h:2,label:'Salon',baseColor:'#1a3a6b'},
+    {x:2,y:0,w:1.5,h:2,label:'Cuisine',baseColor:'#0d2a50'},
+    {x:0,y:2,w:1.5,h:1.5,label:'Chambre',baseColor:'#162d54'},
+    {x:1.5,y:2,w:2,h:1.5,label:'Bureau',baseColor:'#0a1e3a'},
+  ];
+
+  function isoProject(x,y,z){
+    const cx=250,cy=120,scale=55;
+    return {
+      x:cx+(x-y)*scale*0.866,
+      y:cy+(x+y)*scale*0.5-z*scale
+    };
+  }
+
+  function drawIsoFace(ctx,pts,fill,stroke='rgba(77,159,255,0.3)'){
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x,pts[0].y);
+    for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i].x,pts[i].y);
+    ctx.closePath();
+    ctx.fillStyle=fill;ctx.fill();
+    ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.stroke();
+  }
+
+  function drawRoom(rx,ry,rw,rh,rz,color,glowColor){
+    // floor
+    const fl=[
+      isoProject(rx,ry,0),isoProject(rx+rw,ry,0),
+      isoProject(rx+rw,ry+rh,0),isoProject(rx,ry+rh,0)
+    ];
+    drawIsoFace(ctx,fl,color+'aa');
+    // left wall
+    const lw=[
+      isoProject(rx,ry,0),isoProject(rx,ry,rz),
+      isoProject(rx,ry+rh,rz),isoProject(rx,ry+rh,0)
+    ];
+    drawIsoFace(ctx,lw,color+'66');
+    // right wall
+    const rwall=[
+      isoProject(rx+rw,ry,0),isoProject(rx+rw,ry,rz),
+      isoProject(rx+rw,ry+rh,rz),isoProject(rx+rw,ry+rh,0)
+    ];
+    drawIsoFace(ctx,rwall,color+'44');
+    // top
+    const top=[
+      isoProject(rx,ry,rz),isoProject(rx+rw,ry,rz),
+      isoProject(rx+rw,ry+rh,rz),isoProject(rx,ry+rh,rz)
+    ];
+    drawIsoFace(ctx,top,glowColor+'55',glowColor);
+  }
+
+  function frame(){
+    t+=0.012;
+    ctx.clearRect(0,0,500,500);
+
+    // BG
+    const grd=ctx.createRadialGradient(250,250,0,250,250,350);
+    grd.addColorStop(0,'#0d0d1a');grd.addColorStop(1,'#050508');
+    ctx.fillStyle=grd;ctx.fillRect(0,0,500,500);
+
+    pf.draw(ctx,500,500,'rgba(77,159,255,');
+
+    // Draw rooms with animated glow
+    const glows=['#1a6bff','#4d9fff','#6b47ff','#1a6bff'];
+    rooms.forEach((r,i)=>{
+      const pulse=0.6+0.4*Math.sin(t+i*1.5);
+      const h=`rgba(${Math.floor(10+pulse*20)},${Math.floor(30+pulse*60)},${Math.floor(80+pulse*120)},`;
+      const glow=glows[i];
+      drawRoom(r.x,r.y,r.w,r.h,1.2+0.1*Math.sin(t+i),h,glow);
+    });
+
+    // Roof ridge
+    const r1=isoProject(0,0,1.2),r2=isoProject(3.5,0,1.2),r3=isoProject(3.5,3.5,1.2),r4=isoProject(0,3.5,1.2);
+    // Floating data points
+    for(let i=0;i<4;i++){
+      const room=rooms[i];
+      const cx=room.x+room.w/2,cy=room.y+room.h/2;
+      const p=isoProject(cx,cy,1.5+0.2*Math.sin(t+i*0.8));
+      const alpha=0.5+0.5*Math.sin(t*1.2+i);
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,4,0,Math.PI*2);
+      ctx.fillStyle=`rgba(77,159,255,${alpha})`;
+      ctx.fill();
+      ctx.shadowBlur=12;ctx.shadowColor='#4d9fff';ctx.fill();ctx.shadowBlur=0;
+    }
+
+    // AI ring
+    const cr=isoProject(1.75,1.75,2.8);
+    ctx.beginPath();
+    ctx.arc(cr.x,cr.y,28,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(26,107,255,${0.3+0.3*Math.sin(t*0.7)})`;
+    ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(cr.x,cr.y,18,t,t+Math.PI*1.4);
+    ctx.strokeStyle='rgba(77,159,255,0.7)';
+    ctx.lineWidth=2;ctx.stroke();
+
+    ctx.fillStyle='rgba(77,159,255,0.8)';
+    ctx.font='bold 10px Inter';ctx.textAlign='center';
+    ctx.fillText('AI',cr.x,cr.y+4);
+
+    requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+/* ——— Video thumbnails canvas ——— */
+const videoScenes=[
+  // 0: Stress detection
+  function(ctx,w,h,t){
+    const bg=ctx.createLinearGradient(0,0,w,h);
+    bg.addColorStop(0,'#050510');bg.addColorStop(1,'#0a0a20');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+    // pulse rings
+    for(let i=0;i<3;i++){
+      const r=60+i*35+(Math.sin(t+i)*8);
+      ctx.beginPath();ctx.arc(w/2,h/2,r,0,Math.PI*2);
+      ctx.strokeStyle=`rgba(255,80,80,${0.5-i*0.15})`;ctx.lineWidth=2;ctx.stroke();
+    }
+    // Heart
+    ctx.fillStyle='rgba(255,80,80,0.9)';
+    ctx.font='bold 28px Inter';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('❤️',w/2,h/2);
+    ctx.fillStyle='rgba(255,160,160,0.8)';
+    ctx.font='11px Inter';ctx.fillText('Stress élevé détecté',w/2,h/2+50);
+    ctx.fillStyle='rgba(77,159,255,0.7)';
+    ctx.fillText('→ Mode relaxation activé',w/2,h/2+66);
+  },
+  // 1: Lighting
+  function(ctx,w,h,t){
+    ctx.fillStyle='#050510';ctx.fillRect(0,0,w,h);
+    const hue=200+30*Math.sin(t*0.5);
+    const light=ctx.createRadialGradient(w/2,h*0.3,0,w/2,h*0.3,h);
+    light.addColorStop(0,`hsla(${hue},80%,55%,0.5)`);light.addColorStop(1,'transparent');
+    ctx.fillStyle=light;ctx.fillRect(0,0,w,h);
+    // lamp
+    ctx.beginPath();ctx.arc(w/2,h*0.3,12,0,Math.PI*2);
+    ctx.fillStyle=`hsla(${hue},90%,75%,0.9)`;ctx.fill();
+    ctx.shadowBlur=30;ctx.shadowColor=`hsl(${hue},80%,60%)`;ctx.fill();ctx.shadowBlur=0;
+    ctx.fillStyle='rgba(255,255,255,0.5)';
+    ctx.font='11px Inter';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('Intensité: '+Math.round(60+30*Math.sin(t*0.7))+'%',w/2,h*0.7);
+    ctx.fillText('Teinte: '+Math.round(hue)+'°',w/2,h*0.7+16);
+  },
+  // 2: Music
+  function(ctx,w,h,t){
+    ctx.fillStyle='#050510';ctx.fillRect(0,0,w,h);
+    const bars=16;
+    const bw=w/bars*0.6;const gap=w/bars;
+    for(let i=0;i<bars;i++){
+      const bh=(40+30*Math.abs(Math.sin(t*2+i*0.7+Math.cos(t+i))))*1;
+      const x=gap*i+gap*0.2;const y=h/2-bh/2;
+      const gr=ctx.createLinearGradient(x,y,x,y+bh);
+      gr.addColorStop(0,'rgba(77,159,255,0.9)');gr.addColorStop(1,'rgba(26,107,255,0.4)');
+      ctx.fillStyle=gr;
+      ctx.beginPath();ctx.roundRect(x,y,bw,bh,3);ctx.fill();
+    }
+    ctx.fillStyle='rgba(255,255,255,0.7)';
+    ctx.font='bold 12px Space Grotesk';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('🎵 Lo-fi — Concentration',w/2,h*0.82);
+  },
+  // 3: MoodBand
+  function(ctx,w,h,t){
+    ctx.fillStyle='#050510';ctx.fillRect(0,0,w,h);
+    // wristband
+    const bx=w/2-50,by=h/2-12,bw2=100,bh2=24;
+    ctx.fillStyle='rgba(26,107,255,0.3)';ctx.strokeStyle='rgba(77,159,255,0.8)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.roundRect(bx,by,bw2,bh2,12);ctx.fill();ctx.stroke();
+    // heartrate line
+    ctx.beginPath();ctx.moveTo(w/2-40,h/2+40);
+    for(let x=0;x<80;x++){
+      const y=Math.sin((x+t*30)*0.3)*10+Math.sin((x+t*20)*0.8)*5;
+      if(x===0)ctx.moveTo(w/2-40+x,h/2+40+y);
+      else ctx.lineTo(w/2-40+x,h/2+40+y);
+    }
+    ctx.strokeStyle='rgba(76,255,145,0.8)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle='rgba(255,255,255,0.7)';ctx.font='11px Inter';ctx.textAlign='center';
+    ctx.fillText('FC: '+(68+Math.round(8*Math.sin(t)))+ ' BPM',w/2,h*0.25);
+    ctx.fillText('Stress: Faible',w/2,h*0.25+16);
+  },
+  // 4: Cameras
+  function(ctx,w,h,t){
+    ctx.fillStyle='#020208';ctx.fillRect(0,0,w,h);
+    // 4-way camera grid
+    const cols=2,rows=2;
+    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+      const x=c*w/2+4,y=r*h/2+4,cw=w/2-8,ch=h/2-8;
+      ctx.fillStyle='#0a0a18';ctx.fillRect(x,y,cw,ch);
+      ctx.strokeStyle='rgba(77,159,255,0.3)';ctx.lineWidth=1;ctx.strokeRect(x,y,cw,ch);
+      // scan line
+      const scanY=y+((t*40+(r*h/2+c*w/2))%(ch))|0;
+      ctx.fillStyle='rgba(77,159,255,0.08)';ctx.fillRect(x,scanY,cw,2);
+      ctx.fillStyle='rgba(255,255,255,0.3)';ctx.font='8px Inter';
+      ctx.fillText(['Entrée','Salon','Jardin','Cuisine'][r*cols+c],x+6,y+14);
+      // detection box
+      if(Math.sin(t+r*c)>0){
+        const bx=x+cw*0.3,by2=y+ch*0.25,bw3=cw*0.4,bh3=ch*0.5;
+        ctx.strokeStyle='rgba(76,255,145,0.5)';ctx.lineWidth=1;ctx.strokeRect(bx,by2,bw3,bh3);
+        ctx.fillStyle='rgba(76,255,145,0.7)';ctx.font='7px Inter';ctx.fillText('Mouvement',bx,by2-2);
+      }
+    }
+    ctx.fillStyle='rgba(77,159,255,0.8)';ctx.font='bold 10px Inter';ctx.textAlign='center';
+    ctx.fillText('● REC',w/2,h-8);
+  },
+  // 5: Full tour
+  function(ctx,w,h,t){
+    const bg=ctx.createLinearGradient(0,0,w,h);
+    bg.addColorStop(0,'#050510');bg.addColorStop(1,'#0a0520');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);
+    const pf2=new ParticleField(25);
+    pf2.draw(ctx,w,h,'rgba(130,80,255,');
+    // rooms minimap
+    const rooms2=[
+      {x:0.1,y:0.1,w:0.35,h:0.4,c:'#1a3a6b',l:'Salon'},
+      {x:0.55,y:0.1,w:0.35,h:0.4,c:'#3a1a6b',l:'Chambre'},
+      {x:0.1,y:0.55,w:0.35,h:0.35,c:'#0d2a50',l:'Cuisine'},
+      {x:0.55,y:0.55,w:0.35,h:0.35,c:'#1a0d40',l:'Bureau'},
+    ];
+    rooms2.forEach((r,i)=>{
+      const pulse=0.4+0.6*Math.abs(Math.sin(t*0.8+i));
+      ctx.fillStyle=r.c+'99';ctx.strokeStyle=`rgba(130,80,255,${pulse})`;ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.roundRect(r.x*w,r.y*h,r.w*w,r.h*h,6);ctx.fill();ctx.stroke();
+      ctx.fillStyle='rgba(255,255,255,0.6)';ctx.font='9px Inter';ctx.textAlign='center';
+      ctx.fillText(r.l,(r.x+r.w/2)*w,(r.y+r.h/2)*h);
+    });
+    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='bold 10px Inter';ctx.textAlign='center';
+    ctx.fillText('MoodHome — Tour complet',w/2,h-8);
+  }
+];
+
+let videoAnims=[];
+function drawVideoFrame(canvasId,sceneIdx,t){
+  const c=document.getElementById(canvasId);
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  videoScenes[sceneIdx](ctx,c.width,c.height,t);
+}
+
+// Start all video thumbnails
+let globalT=0;
+function animateAll(){
+  globalT+=0.016;
+  for(let i=0;i<6;i++)drawVideoFrame('vid'+i,i,globalT);
+  requestAnimationFrame(animateAll);
+}
+requestAnimationFrame(animateAll);
+
+// Modal canvas
+function startModalCanvas(sceneIdx){
+  if(modalAnim)cancelAnimationFrame(modalAnim);
+  let lt=0;
+  function mframe(ts){
+    lt+=(ts-lt)*0.016||0.016;
+    const c=document.getElementById('modalCanvas');
+    if(!c)return;
+    const ctx=c.getContext('2d');
+    videoScenes[sceneIdx](ctx,c.width,c.height,globalT);
+    modalAnim=requestAnimationFrame(mframe);
+  }
+  modalAnim=requestAnimationFrame(mframe);
+}
+</script>
+</body>
+</html>
